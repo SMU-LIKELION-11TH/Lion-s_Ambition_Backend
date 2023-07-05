@@ -18,7 +18,7 @@ class Order(models.Model):
 
 
 class Product(models.Model):
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, db_column=Category.pk)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True, blank=False, null=False)
     primary_image_url = models.CharField(max_length=200, null=False)
     regular_price = models.IntegerField(null=False)
@@ -26,7 +26,7 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, db_column=Order.pk)
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE, db_column=Product.pk)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     unit_price = models.IntegerField(null=False)
     quantity = models.IntegerField(null=False)
