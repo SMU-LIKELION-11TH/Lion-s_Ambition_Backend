@@ -15,3 +15,11 @@ class Order(models.Model):
     status = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Product(models.Model):
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, db_column=Category.pk)
+    name = models.CharField(max_length=100, unique=True, blank=False, null=False)
+    primary_image_url = models.CharField(max_length=200, null=False)
+    regular_price = models.IntegerField(null=False)
+    is_soldout = models.BooleanField()
