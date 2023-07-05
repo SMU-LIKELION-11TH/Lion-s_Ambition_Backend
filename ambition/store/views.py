@@ -1,5 +1,9 @@
-from django.http import HttpRequest, HttpResponse
+from http import HTTPStatus
+
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
+
+from store.models import Category
 
 # Create your views here.
 
@@ -77,4 +81,16 @@ class CategoryView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """카테고리/조회"""
-        pass
+        response_body = {
+            "data": {
+                "categories": [],
+            },
+        }
+        for entity in Category.objects.all():
+            response_body['data']['categories'].append(
+                {
+                    "id": entity.pk,
+                    "name": entity.name
+                }
+            )
+        return JsonResponse(data=response_body, status=HTTPStatus.OK)
