@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
-from store.models import Category
+from store.models import Category, Product
 
 # Create your views here.
 
@@ -61,7 +61,26 @@ class ProductView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """상품/조회/여러 항목 조회"""
-        pass
+        response_body = {
+            "data": {
+                "products": [],
+            },
+        }
+        for entity in Product.objects.all():
+            response_body['data']['products'].append(
+                {
+                    "id": entity.pk,
+                    "category": {
+                        "id": entity.category.pk,
+                        "name": entity.category.name,
+                    },
+                    "name": entity.name,
+                    "image_url": entity.primary_image_url,
+                    "price": entity.regular_price,
+                    "is_soldout": entity.is_soldout,
+                }
+            )
+        return JsonResponse(data=response_body, status=HTTPStatus.OK)
 
     def post(self, request: HttpRequest) -> HttpResponse:
         """상품/추가"""
