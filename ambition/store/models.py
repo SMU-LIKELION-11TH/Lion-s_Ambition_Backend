@@ -23,3 +23,10 @@ class Product(models.Model):
     primary_image_url = models.CharField(max_length=200, null=False)
     regular_price = models.IntegerField(null=False)
     is_soldout = models.BooleanField()
+
+
+class OrderItem(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, db_column=Order.pk)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE, db_column=Product.pk)
+    unit_price = models.IntegerField(null=False)
+    quantity = models.IntegerField(null=False)
