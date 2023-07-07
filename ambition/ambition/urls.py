@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from store import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('signup', views.UserCreateView.as_view()),
+    path('login', views.UserLoginView.as_view()),
+    path('logout', views.UserLogoutView.as_view()),
+    path('order', views.OrderView.as_view()),
+    path('order/{id}', views.OrderIdView.as_view()),
+    path('product', views.ProductView.as_view()),
+    path('product/{id}', views.ProductIdView.as_view()),
+    path('category', views.CategoryView.as_view()),
 ]
