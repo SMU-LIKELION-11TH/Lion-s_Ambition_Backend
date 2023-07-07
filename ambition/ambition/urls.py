@@ -15,17 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 from store import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('signup', views.UserCreateView.as_view()),
-    path('login', views.UserLoginView.as_view()),
-    path('logout', views.UserLogoutView.as_view()),
-    path('order', views.OrderView.as_view()),
-    path('order/{id}', views.OrderIdView.as_view()),
-    path('product', views.ProductView.as_view()),
-    path('product/{id}', views.ProductIdView.as_view()),
-    path('category', views.CategoryView.as_view()),
+    path('signup', csrf_exempt(views.UserCreateView.as_view())),
+    path('login', csrf_exempt(views.UserLoginView.as_view())),
+    path('logout', csrf_exempt(views.UserLogoutView.as_view())),
+    path('order', csrf_exempt(views.OrderView.as_view())),
+    path('order/{id}', csrf_exempt(views.OrderIdView.as_view())),
+    path('product', csrf_exempt(views.ProductView.as_view())),
+    path('product/{id}', csrf_exempt(views.ProductIdView.as_view())),
+    path('category', csrf_exempt(views.CategoryView.as_view())),
 ]
