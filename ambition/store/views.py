@@ -47,6 +47,23 @@ def send_verification_email(email, verification_code):
     #  .....모르겠어요...
 
 
+class UserLoginView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return HttpResponse({'message': '이메일의 형식이 옳지 않습니다. 입력하신 내용을 다시 확인해주세요.'},
+                                status=400)  # Invalid email format
+
+        try:
+            if store.objects.filter(email=data['email']).exists():
+                user = store.objects.get(email=data['email'])
+
+                if user.token == data['token']:
+                    return HttpResponse({'message': '회원가입에 성공하였습니다.'}, status=301)  # login success
+                return HttpResponse({'message': '잘못된 비밀번호입니다.'}, status=401)  # wrong password
+            return HttpResponse({'message': '존재하지 않는 계정입니다.'}, status=401)  # non email
+        return HttpResponse({'message': 로그인 과정에서 오류가 발생했습니다.})
 class UserLogoutView(View):
     "/logout"
 
