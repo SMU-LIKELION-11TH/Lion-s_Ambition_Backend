@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.views.generic import View
 
 from store.models import Category, Product
@@ -127,7 +127,47 @@ class ProductIdView(View):
 
     def patch(self, request: HttpRequest, product_id: int) -> HttpResponse:
         """상품/수정"""
-        pass
+        # TODO: 사용자 인증 기능 추가
+        try:
+            data = QueryDict(request.body)
+            if not data:
+                raise ValueError()
+            product = Product.objects.get(pk=product_id)
+            if 'category_id' in data:
+                product.category = Category.objects.get(pk=int(data.get('category_id')))
+            if 'name' in data:
+                product.name = data.get('name')
+            if 'image_url' in data:
+                product.primary_image_url = data.get('image_url')
+            if 'price' in data:
+                product.regular_price = int(data.get('price'))
+            if 'soldout' in data:
+                if isinstance(data.get('soldout'), str):
+                    product.is_soldout = data.get('soldout') == 'true'
+                elif isinstance(data.get('soldout'), bool):
+                    product.is_soldout = data.get('soldout')
+                else:
+                    raise ValueError()
+            product.save()
+            return JsonResponse(status=HTTPStatus.OK, data={
+                "data": {
+                    "product": {
+                        "id": product.pk,
+                        "category_id": product.category.pk,
+                        "category_name": product.category.name,
+                        "name": product.name,
+                        "image_url": product.primary_image_url,
+                        "price": product.regular_price,
+                        "is_soldout": product.is_soldout,
+                    }
+                }
+            })
+        except ObjectDoesNotExist:
+            return JsonResponse(status=HTTPStatus.NOT_FOUND, data={})
+        except ValueError:
+            return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={})
+        except IntegrityError:
+            return JsonResponse(status=HTTPStatus.CONFLICT, data={})
 
 
 class CategoryView(View):
