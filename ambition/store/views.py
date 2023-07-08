@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
@@ -84,7 +86,40 @@ class ProductView(View):
 
     def post(self, request: HttpRequest) -> HttpResponse:
         """상품/추가"""
-        pass
+        # TODO: 사용자 인증 기능 추가
+        try:
+            data = request.POST
+            product = Product()
+            product.category = Category.objects.get(pk=int(data.get('category_id')))
+            product.name = data.get('name')
+            product.primary_image_url = data.get('image_url')
+            product.regular_price = int(data.get('price'))
+            if isinstance(data.get('soldout'), str):
+                product.is_soldout = data.get('soldout') == 'true'
+            elif isinstance(data.get('soldout'), bool):
+                product.is_soldout = data.get('soldout')
+            else:
+                raise ValueError()
+            product.save()
+            return JsonResponse(status=HTTPStatus.CREATED, data={
+                "data": {
+                    "product": {
+                        "id": product.pk,
+                        "category_id": product.category.pk,
+                        "category_name": product.category.name,
+                        "name": product.name,
+                        "image_url": product.primary_image_url,
+                        "price": product.regular_price,
+                        "is_soldout": product.is_soldout,
+                    }
+                }
+            })
+        except ObjectDoesNotExist:
+            return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
+        except ValueError:
+            return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={})
+        except IntegrityError:
+            return JsonResponse(status=HTTPStatus.CONFLICT, data={})
 
 
 class ProductIdView(View):
