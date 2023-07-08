@@ -57,9 +57,9 @@ class UserLogoutView(View):
     def get(self, request):
         if request.user.is_authenticated:
             logout(request)
-            return JsonResponse({'message': '로그아웃이 성공적으로 처리되었습니다.'}, status=200)
+            return HttpResponse({'message': '로그아웃이 성공적으로 처리되었습니다.'}, status=200)
         else:
-            return JsonResponse({'message': '로그인되어 있지 않습니다.'}, status=401)
+            return HttpResponse({'message': '로그인되어 있지 않습니다.'}, status=401)
 
 class OrderView(View):
     "/order"
