@@ -63,26 +63,43 @@ class ProductView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """상품/조회/여러 항목 조회"""
-        response_body = {
-            "data": {
-                "products": [],
-            },
-        }
-        for entity in Product.objects.all():
-            response_body['data']['products'].append(
-                {
-                    "id": entity.pk,
-                    "category": {
-                        "id": entity.category.pk,
-                        "name": entity.category.name,
-                    },
-                    "name": entity.name,
-                    "image_url": entity.primary_image_url,
-                    "price": entity.regular_price,
-                    "is_soldout": entity.is_soldout,
-                }
-            )
-        return JsonResponse(data=response_body, status=HTTPStatus.OK)
+        try:
+            data = request.GET
+            query_kwargs = {}
+            if 'category_id' in data:
+                query_kwargs['category'] = Category.objects.get(pk=int(data.get('category_id')))
+            if 'soldout' in data:
+                if isinstance(data.get('soldout'), str):
+                    query_kwargs['is_soldout'] = data.get('soldout') == 'true'
+                elif isinstance(data.get('soldout'), bool):
+                    query_kwargs['is_soldout'] = data.get('soldout')
+                else:
+                    raise ValueError()
+            # TODO: pagination 기능 추가
+            response_body = {
+                "data": {
+                    "products": [],
+                },
+            }
+            for entity in Product.objects.filter(**query_kwargs):
+                response_body['data']['products'].append(
+                    {
+                        "id": entity.pk,
+                        "category": {
+                            "id": entity.category.pk,
+                            "name": entity.category.name,
+                        },
+                        "name": entity.name,
+                        "image_url": entity.primary_image_url,
+                        "price": entity.regular_price,
+                        "is_soldout": entity.is_soldout,
+                    }
+                )
+            return JsonResponse(status=HTTPStatus.OK, data=response_body)
+        except ObjectDoesNotExist:
+            return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
+        except ValueError:
+            return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={})
 
     def post(self, request: HttpRequest) -> HttpResponse:
         """상품/추가"""
