@@ -45,6 +45,12 @@ def generate_verification_code():
 
 def send_verification_email(email, verification_code):
     #  .....모르겠어요...
+    subject = "회원가입 인증번호 메일입니다."
+    to = data['email']
+    from_email = "ambitionStroe@naver.com"
+    message = f"인증번호:{verification_code}"
+    EmailMessage(subject=subject, body=message, to=to, from_email=from_email).send()
+
 
 
 class UserLoginView(View):
