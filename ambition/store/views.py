@@ -9,47 +9,23 @@ from store.models import Category
 
 
 class UserCreateView(View):
-    "/signup"
     def post(self, request):
         data = json.loads(request.body)
         email = data['email']
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        """사용자/추가(회원가입)"""
-        pass
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return HttpResponse({'message': '이메일의 형식이 옳지 않습니다. 입력하신 내용을 다시 확인해주세요.'}, status=400)  # Invalid email format
 
-        verification_code = generate_verification_code()  # Generate a random verification code
-        send_verification_email(email, verification_code)  # Send the verification code
-
-class UserLoginView(View):
-    "/login"
         store.objects.create(
             name=data['name'],
             email=data['email'],
             token=data['token'],
-            verification_code=verification_code,  # Save the verification code to the user model
         )
         return HttpResponse({'message': '회원가입 완료'}, status=201)  # Successful user create
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        """사용자/로그인"""
-        pass
     def get(self, request):  # save user data
         User_data = User.objects.values()
         return JsonResponse({'users': list(User_data)}, status=200)
-
-def generate_verification_code():
-    return str(random.randint(10000, 99999))  # random 5-digit verification code
-
-def send_verification_email(email, verification_code):
-    #  .....모르겠어요...
-    subject = "회원가입 인증번호 메일입니다."
-    to = data['email']
-    from_email = "ambitionStroe@naver.com"
-    message = f"인증번호:{verification_code}"
-    EmailMessage(subject=subject, body=message, to=to, from_email=from_email).send()
 
 
 
@@ -69,7 +45,7 @@ class UserLoginView(View):
                     return HttpResponse({'message': '회원가입에 성공하였습니다.'}, status=301)  # login success
                 return HttpResponse({'message': '잘못된 비밀번호입니다.'}, status=401)  # wrong password
             return HttpResponse({'message': '존재하지 않는 계정입니다.'}, status=401)  # non email
-        return HttpResponse({'message': 로그인 과정에서 오류가 발생했습니다.})
+        return HttpResponse({'message': 로그인 과정에서 오류가 발생했습니다.}, status=400)
 class UserLogoutView(View):
     "/logout"
 
