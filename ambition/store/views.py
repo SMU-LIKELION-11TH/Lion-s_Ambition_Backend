@@ -26,8 +26,8 @@ class UserCreateView(View):
         return HttpResponse({'message': '회원가입 완료'}, status=201)  # Successful user create
 
     def get(self, request):  # save user data
-        User_data = User.objects.values()
-        return JsonResponse({'users': list(User_data)}, status=200)
+        User_data = store.objects.values()
+        return HttpResponse({'users': list(User_data)}, status=200)
 
 
 
