@@ -4,9 +4,11 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
 from store.models import Category
+from django.contrib.auth import logout
+
+
 
 # Create your views here.
-
 
 class UserCreateView(View):
     def post(self, request):
@@ -46,13 +48,17 @@ class UserLoginView(View):
                 return HttpResponse({'message': '잘못된 비밀번호입니다.'}, status=401)  # wrong password
             return HttpResponse({'message': '존재하지 않는 계정입니다.'}, status=401)  # non email
         return HttpResponse({'message': 로그인 과정에서 오류가 발생했습니다.}, status=400)
+
+
+
 class UserLogoutView(View):
     "/logout"
-
-    def get(self, request: HttpRequest) -> HttpResponse:
-        """사용자/로그아웃"""
-        pass
-
+    def get(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+            return JsonResponse({'message': '로그아웃이 성공적으로 처리되었습니다.'}, status=200)
+        else:
+            return JsonResponse({'message': '로그인되어 있지 않습니다.'}, status=401)
 
 class OrderView(View):
     "/order"
