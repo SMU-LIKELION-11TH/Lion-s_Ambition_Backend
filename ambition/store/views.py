@@ -47,7 +47,8 @@ class UserLoginView(View):
                     return HttpResponse({'message': '회원가입에 성공하였습니다.'}, status=301)  # login success
                 return HttpResponse({'message': '잘못된 비밀번호입니다.'}, status=401)  # wrong password
             return HttpResponse({'message': '존재하지 않는 계정입니다.'}, status=401)  # non email
-        return HttpResponse({'message': 로그인 과정에서 오류가 발생했습니다.}, status=400)
+        except:
+            return HttpResponse({'message': "로그인 과정에서 오류가 발생했습니다."}, status=400)
 
 
 
