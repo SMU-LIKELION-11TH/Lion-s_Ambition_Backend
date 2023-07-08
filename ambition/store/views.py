@@ -47,11 +47,11 @@ class OrderView(View):
 class OrderIdView(View):
     "/order/{id}"
 
-    def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/조회/단일 항목 조회"""
         pass
 
-    def patch(self, request: HttpRequest) -> HttpResponse:
+    def patch(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/수정"""
         pass
 
@@ -71,7 +71,7 @@ class ProductView(View):
 class ProductIdView(View):
     "/product/{id}"
 
-    def patch(self, request: HttpRequest) -> HttpResponse:
+    def patch(self, request: HttpRequest, product_id: int) -> HttpResponse:
         """상품/수정"""
         pass
 
