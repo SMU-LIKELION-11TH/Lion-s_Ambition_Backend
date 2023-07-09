@@ -7,6 +7,12 @@ class User(models.Model):
     token = models.CharField(verbose_name='비밀번호', max_length=64)
 
 
+class EmailValidation(models.Model):
+    email = models.EmailField(max_length=64)
+    codes = models.EmailField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
