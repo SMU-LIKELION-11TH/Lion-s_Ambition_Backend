@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.views.generic import View
 
-from store.models import Category, Product
+from store.models import *
 
 # Create your views here.
 
