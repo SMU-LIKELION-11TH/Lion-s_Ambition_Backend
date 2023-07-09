@@ -18,8 +18,12 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
 
 
+class OrderStatus(models.Model):
+    name = models.CharField(max_length=16)
+
+
 class Order(models.Model):
-    status = models.IntegerField(default=1)
+    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
