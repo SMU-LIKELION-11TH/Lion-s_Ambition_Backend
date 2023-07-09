@@ -41,6 +41,7 @@ class EmailValidationView(View):
 
         입력 형식이 올바르지 않다면 ValueError를 발생시킵니다.
         """
+        # TODO: 이메일 주소 형식이 올바른지 검사하기.
         data = QueryDict(request.body)
         return EmailValidationView.RequestDTO(email=data['email'])
 
