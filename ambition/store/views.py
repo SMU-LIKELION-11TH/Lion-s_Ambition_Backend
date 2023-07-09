@@ -289,11 +289,55 @@ class OrderIdView(View):
 
     def get(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/조회/단일 항목 조회"""
-        pass
+        try:
+            self._validate_user_logged_in(request)
+            order = Order.objects.get(pk=order_id)
+            return JsonResponse(status=HTTPStatus.OK, data={
+                "data": {
+                    "order": self._render_order(order)
+                }
+            })
+        except ObjectDoesNotExist:
+            return HttpResponse(status=HTTPStatus.NOT_FOUND)
 
     def patch(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/수정"""
         pass
+
+    def _validate_user_logged_in(self, request: HttpRequest):
+        # TODO: 기능 구현
+        pass
+
+    def _render_order(self, entity: Order) -> Dict:
+        items = OrderItem.objects.filter(order=entity)
+        return {
+            "id": entity.pk,
+            "status": {
+                "id": entity.status.pk,
+                "name": entity.status.name,
+            },
+            "items": list(map(self._render_order_item, items)),
+            "total_price": self._calc_total_price(items),
+            "created_at": entity.created_at,
+            "updated_at": entity.updated_at,
+        }
+
+    def _calc_total_price(self, items: List[OrderItem]) -> int:
+        total_price = 0
+        for item in items:
+            total_price += item.unit_price * item.quantity
+        return total_price
+
+    def _render_order_item(self, entity: OrderItem) -> Dict:
+        return {
+            "id": entity.pk,
+            "product": {
+                "id": entity.product.pk,
+                "name": entity.product.name,
+            },
+            "unit-price": entity.unit_price,
+            "quantity": entity.quantity,
+        }
 
 
 class ProductView(View):
