@@ -5,7 +5,7 @@ class User(models.Model):
     name = models.CharField(max_length=16)
     email = models.EmailField(max_length=64, unique=True)
     password = models.CharField(max_length=64)
-    kakao_oauth_token = models.CharField(max_length=64)
+    kakao_oauth_token = models.CharField(max_length=64, null=True)
 
 
 class EmailValidation(models.Model):
