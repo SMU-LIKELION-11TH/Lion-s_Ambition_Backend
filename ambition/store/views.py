@@ -1,4 +1,5 @@
 import dataclasses
+import datetime
 import random
 from http import HTTPStatus
 
@@ -28,9 +29,9 @@ class EmailValidationView(View):
             dto = self.parse_request_body(request)
             codes = self.generate_random_code(5)
             self.render_email(dto.email, codes).send()
-            entity = EmailValidation()
-            entity.email = dto.email
+            entity, is_created = EmailValidation.objects.get_or_create(email=dto.email)
             entity.codes = codes
+            entity.created_at = datetime.datetime.now()
             entity.save()
             return HttpResponse(status=HTTPStatus.OK)
         except (KeyError, ValueError):
