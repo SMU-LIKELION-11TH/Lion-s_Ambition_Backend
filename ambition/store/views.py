@@ -64,9 +64,58 @@ class EmailValidationView(View):
 class UserCreateView(View):
     "/signup"
 
+    @dataclasses.dataclass
+    class RequestDTO:
+        email: str
+        password: str
+        name: str
+        validation_code: str
+
     def post(self, request: HttpRequest) -> HttpResponse:
         """사용자/추가(회원가입)"""
-        pass
+        try:
+            dto = self.parse_request_body(request)
+            self.check_email_validation_code(dto)
+            user = self.create_user(dto)
+            return JsonResponse(status=HTTPStatus.CREATED, data={
+                "message": "회원가입에 성공하였습니다.",
+                "data": {
+                    "user": {
+                        "id": user.pk,
+                        "name": user.name,
+                        "email": user.email,
+                    }
+                }
+            })
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+        except (AssertionError, ObjectDoesNotExist):
+            return HttpResponse(status=HTTPStatus.UNAUTHORIZED)
+        except IntegrityError:
+            return HttpResponse(status=HTTPStatus.CONFLICT)
+
+    def parse_request_body(self, request: HttpRequest) -> RequestDTO:
+        data = QueryDict(request.body)
+        return UserCreateView.RequestDTO(
+            email=data['email'],
+            password=data['password'],
+            name=data['name'],
+            validation_code=data['validation-code'],
+        )
+
+    def check_email_validation_code(self, dto: RequestDTO):
+        entity = EmailValidation.objects.get(email=dto.email)
+        if entity.codes != dto.validation_code:
+            raise AssertionError()
+
+    def create_user(self, dto: RequestDTO) -> User:
+        entity = User()
+        entity.name = dto.name
+        entity.email = dto.email
+        entity.password = dto.password
+        entity.kakao_oauth_token = None
+        entity.save()
+        return entity
 
 
 class UserLoginView(View):
