@@ -2,6 +2,7 @@ import dataclasses
 import datetime
 import random
 from http import HTTPStatus
+from typing import *
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
@@ -153,9 +154,81 @@ class UserLogoutView(View):
 class OrderView(View):
     "/order"
 
+    @dataclasses.dataclass
+    class QueryDTO:
+        created_year: Optional[int]
+        created_month: Optional[int]
+        status: Optional[int]
+
     def get(self, request: HttpRequest) -> HttpResponse:
         """주문/조회/여러 항목 조회"""
+        try:
+            self._validate_user_logged_in(request)
+            dto = self._parse_query_dto(request)
+            entities = self._query_order_entities(dto)
+            return JsonResponse(status=HTTPStatus.OK, data={
+                "data": {
+                    "orders": list(map(self._render_order, entities)),
+                }
+            })
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+
+    def _validate_user_logged_in(self, request: HttpRequest):
+        # TODO: 기능 구현
         pass
+
+    def _parse_query_dto(self, request: HttpRequest) -> QueryDTO:
+        data = request.GET
+        return OrderView.QueryDTO(
+            created_year=self._parse_optional_int(data.get('create-year')),
+            created_month=self._parse_optional_int(data.get('create-month')),
+            status=self._parse_optional_int(data.get('status')),
+        )
+
+    def _parse_optional_int(self, optional_int_like: str | None) -> int | None:
+        if optional_int_like is not None:
+            return int(optional_int_like)
+        return optional_int_like
+
+    def _query_order_entities(self, dto: QueryDTO) -> List[Order]:
+        kwargs = {}
+        retval = []
+        if dto.status is not None:
+            kwargs['status'] = OrderStatus.objects.get(pk=dto.status)
+        for entity in Order.objects.filter(**kwargs):
+            if (dto.created_year is not None) and (entity.created_at.year != dto.created_year):
+                continue
+            if (dto.created_month is not None) and (entity.created_at.month != dto.created_month):
+                continue
+            retval.append(entity)
+        return retval
+
+    def _render_order(self, entity: Order) -> Dict:
+        items = OrderItem.objects.filter(order=entity)
+        return {
+            "id": entity.pk,
+            "status": {
+                "id": entity.status.pk,
+                "name": entity.status.name,
+            },
+            "items": list(map(self._render_order_item, items)),
+            "total_price": sum(map(lambda e: e.unit_price, items)),
+            "created_at": entity.created_at,
+            "updated_at": entity.updated_at,
+        }
+
+    def _render_order_item(self, entity: OrderItem) -> Dict:
+        return {
+            "id": entity.pk,
+            "product": {
+                "id": entity.product.pk,
+                "name": entity.product.name,
+            },
+            "unit-price": entity.unit_price,
+            "quantity": entity.quantity,
+        }
+
 
     def post(self, request: HttpRequest) -> HttpResponse:
         """주문/생성"""
