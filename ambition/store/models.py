@@ -9,7 +9,7 @@ class User(models.Model):
 
 
 class EmailValidation(models.Model):
-    email = models.EmailField(max_length=64)
+    email = models.EmailField(primary_key=True, max_length=64)
     codes = models.EmailField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 
