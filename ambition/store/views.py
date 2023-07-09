@@ -120,9 +120,26 @@ class UserCreateView(View):
 class UserLoginView(View):
     "/login"
 
+    @dataclasses.dataclass
+    class RequestDTO:
+        email: str
+        password: str
+
     def post(self, request: HttpRequest) -> HttpResponse:
         """사용자/로그인"""
-        pass
+        try:
+            dto = self.parse_request_body(request)
+            # TODO: 로그인 기능 구현
+            return JsonResponse(status=HTTPStatus.OK, data={})
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+
+    def parse_request_body(self, request: HttpRequest) -> RequestDTO:
+        data = QueryDict(request.body)
+        return UserLoginView.RequestDTO(
+            email=data['email'],
+            password=data['password'],
+        )
 
 
 class UserLogoutView(View):
