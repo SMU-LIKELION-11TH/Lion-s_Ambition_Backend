@@ -12,6 +12,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.views.generic import View
 
 from store.models import *
+from store.serializers import *
 
 # Create your views here.
 
@@ -81,11 +82,7 @@ class UserCreateView(View):
             return JsonResponse(status=HTTPStatus.CREATED, data={
                 "message": "회원가입에 성공하였습니다.",
                 "data": {
-                    "user": {
-                        "id": user.pk,
-                        "name": user.name,
-                        "email": user.email,
-                    }
+                    "user": serializeUser(user)
                 }
             })
         except ValueError:
@@ -171,10 +168,10 @@ class OrderView(View):
         try:
             self._validate_user_logged_in(request)
             dto = self._parse_query_dto(request)
-            entities = self._query_order_entities(dto)
+            order_entities = self._query_order_entities(dto)
             return JsonResponse(status=HTTPStatus.OK, data={
                 "data": {
-                    "orders": list(map(self._render_order, entities)),
+                    "orders": list(map(serializeOrder, order_entities)),
                 }
             })
         except (ValueError, ObjectDoesNotExist):
@@ -210,11 +207,11 @@ class OrderView(View):
         """주문/생성"""
         try:
             self._validate_user_logged_in(request)
-            dto_list = self._parse_orderitem_dto_list(request)
-            entity = self._save_entity(dto_list)
+            orderitem_dto_list = self._parse_orderitem_dto_list(request)
+            order_entity = self._save_order(orderitem_dto_list)
             return JsonResponse(status=HTTPStatus.CREATED, data={
                 "data": {
-                    "order": self._render_order(entity),
+                    "order": serializeOrder(order_entity),
                 }
             })
         except ValueError:
@@ -231,7 +228,7 @@ class OrderView(View):
             retval.append(orderitem)
         return retval
 
-    def _save_entity(self, dto_list: List[OrderItemDTO]) -> Order:
+    def _save_order(self, dto_list: List[OrderItemDTO]) -> Order:
         entities = []
         order = Order()
         order.status = OrderStatus.objects.get(pk=1)
@@ -252,37 +249,6 @@ class OrderView(View):
         # TODO: 기능 구현
         pass
 
-    def _render_order(self, entity: Order) -> Dict:
-        items = OrderItem.objects.filter(order=entity)
-        return {
-            "id": entity.pk,
-            "status": {
-                "id": entity.status.pk,
-                "name": entity.status.name,
-            },
-            "items": list(map(self._render_order_item, items)),
-            "total_price": self._calc_total_price(items),
-            "created_at": entity.created_at,
-            "updated_at": entity.updated_at,
-        }
-
-    def _calc_total_price(self, items: List[OrderItem]) -> int:
-        total_price = 0
-        for item in items:
-            total_price += item.unit_price * item.quantity
-        return total_price
-
-    def _render_order_item(self, entity: OrderItem) -> Dict:
-        return {
-            "id": entity.pk,
-            "product": {
-                "id": entity.product.pk,
-                "name": entity.product.name,
-            },
-            "unit-price": entity.unit_price,
-            "quantity": entity.quantity,
-        }
-
 
 class OrderIdView(View):
     "/order/{id}"
@@ -298,7 +264,7 @@ class OrderIdView(View):
             order = Order.objects.get(pk=order_id)
             return JsonResponse(status=HTTPStatus.OK, data={
                 "data": {
-                    "order": self._render_order(order)
+                    "order": serializeOrder(order)
                 }
             })
         except ObjectDoesNotExist:
@@ -314,7 +280,7 @@ class OrderIdView(View):
             order.save()
             return JsonResponse(status=HTTPStatus.OK, data={
                 "data": {
-                    "order": self._render_order(order)
+                    "order": serializeOrder(order)
                 }
             })
         except ValueError:
@@ -331,37 +297,6 @@ class OrderIdView(View):
     def _validate_user_logged_in(self, request: HttpRequest):
         # TODO: 기능 구현
         pass
-
-    def _render_order(self, entity: Order) -> Dict:
-        items = OrderItem.objects.filter(order=entity)
-        return {
-            "id": entity.pk,
-            "status": {
-                "id": entity.status.pk,
-                "name": entity.status.name,
-            },
-            "items": list(map(self._render_order_item, items)),
-            "total_price": self._calc_total_price(items),
-            "created_at": entity.created_at,
-            "updated_at": entity.updated_at,
-        }
-
-    def _calc_total_price(self, items: List[OrderItem]) -> int:
-        total_price = 0
-        for item in items:
-            total_price += item.unit_price * item.quantity
-        return total_price
-
-    def _render_order_item(self, entity: OrderItem) -> Dict:
-        return {
-            "id": entity.pk,
-            "product": {
-                "id": entity.product.pk,
-                "name": entity.product.name,
-            },
-            "unit-price": entity.unit_price,
-            "quantity": entity.quantity,
-        }
 
 
 class ProductView(View):
@@ -382,26 +317,12 @@ class ProductView(View):
                 else:
                     raise ValueError()
             # TODO: pagination 기능 추가
-            response_body = {
+            products = Product.objects.filter(**query_kwargs)
+            return JsonResponse(status=HTTPStatus.OK, data={
                 "data": {
-                    "products": [],
+                    "products": list(map(serializeProduct, products)),
                 },
-            }
-            for entity in Product.objects.filter(**query_kwargs):
-                response_body['data']['products'].append(
-                    {
-                        "id": entity.pk,
-                        "category": {
-                            "id": entity.category.pk,
-                            "name": entity.category.name,
-                        },
-                        "name": entity.name,
-                        "image_url": entity.primary_image_url,
-                        "price": entity.regular_price,
-                        "is_soldout": entity.is_soldout,
-                    }
-                )
-            return JsonResponse(status=HTTPStatus.OK, data=response_body)
+            })
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
         except ValueError:
@@ -426,16 +347,8 @@ class ProductView(View):
             product.save()
             return JsonResponse(status=HTTPStatus.CREATED, data={
                 "data": {
-                    "product": {
-                        "id": product.pk,
-                        "category_id": product.category.pk,
-                        "category_name": product.category.name,
-                        "name": product.name,
-                        "image_url": product.primary_image_url,
-                        "price": product.regular_price,
-                        "is_soldout": product.is_soldout,
-                    }
-                }
+                    "product": serializeProduct(product),
+                },
             })
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
@@ -474,16 +387,8 @@ class ProductIdView(View):
             product.save()
             return JsonResponse(status=HTTPStatus.OK, data={
                 "data": {
-                    "product": {
-                        "id": product.pk,
-                        "category_id": product.category.pk,
-                        "category_name": product.category.name,
-                        "name": product.name,
-                        "image_url": product.primary_image_url,
-                        "price": product.regular_price,
-                        "is_soldout": product.is_soldout,
-                    }
-                }
+                    "product": serializeProduct(product),
+                },
             })
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.NOT_FOUND, data={})
@@ -498,16 +403,9 @@ class CategoryView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """카테고리/조회"""
-        response_body = {
+        categories = Category.objects.all()
+        return JsonResponse(status=HTTPStatus.OK, data={
             "data": {
-                "categories": [],
+                "categories": list(map(serializeCategory, categories)),
             },
-        }
-        for entity in Category.objects.all():
-            response_body['data']['categories'].append(
-                {
-                    "id": entity.pk,
-                    "name": entity.name
-                }
-            )
-        return JsonResponse(data=response_body, status=HTTPStatus.OK)
+        })
