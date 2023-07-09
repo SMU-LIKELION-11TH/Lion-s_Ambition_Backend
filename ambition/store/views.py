@@ -287,6 +287,10 @@ class OrderView(View):
 class OrderIdView(View):
     "/order/{id}"
 
+    @dataclasses.dataclass
+    class OrderUpdateDTO:
+        status: int
+
     def get(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/조회/단일 항목 조회"""
         try:
@@ -302,7 +306,27 @@ class OrderIdView(View):
 
     def patch(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/수정"""
-        pass
+        try:
+            self._validate_user_logged_in(request)
+            dto = self._parse_order_update_dto(request)
+            order = Order.objects.get(pk=order_id)
+            order.status = OrderStatus.objects.get(pk=dto.status)
+            order.save()
+            return JsonResponse(status=HTTPStatus.OK, data={
+                "data": {
+                    "order": self._render_order(order)
+                }
+            })
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return HttpResponse(status=HTTPStatus.NOT_FOUND)
+
+    def _parse_order_update_dto(self, request: HttpRequest) -> OrderUpdateDTO:
+        data = QueryDict(request.body)
+        return OrderIdView.OrderUpdateDTO(
+            status=int(data['status']),
+        )
 
     def _validate_user_logged_in(self, request: HttpRequest):
         # TODO: 기능 구현
