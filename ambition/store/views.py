@@ -1,6 +1,9 @@
+import dataclasses
+import random
 from http import HTTPStatus
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.views.generic import View
@@ -8,6 +11,52 @@ from django.views.generic import View
 from store.models import *
 
 # Create your views here.
+
+
+class EmailValidationView(View):
+    @dataclasses.dataclass
+    class RequestDTO:
+        email: str
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """이메일 인증 기능을 수행합니다.
+
+        반드시 인증할 이메일 주소를 요청 Body에 포함해야합니다.
+        이메일 주소가 포함 되어있지 않다면 400 BadRequest 응답코드를 반환합니다.
+        """
+        try:
+            dto = self.parse_request_body(request)
+            codes = self.generate_random_code(5)
+            self.render_email(dto.email, codes).send()
+            entity = EmailValidation()
+            entity.email = dto.email
+            entity.codes = codes
+            entity.save()
+            return HttpResponse(status=HTTPStatus.OK)
+        except (KeyError, ValueError):
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+
+    def parse_request_body(self, request: HttpRequest) -> RequestDTO:
+        """입력 형식으로부터 데이터를 추출합니다.
+
+        입력 형식이 올바르지 않다면 ValueError를 발생시킵니다.
+        """
+        data = QueryDict(request.body)
+        return EmailValidationView.RequestDTO(email=data['email'])
+
+    def generate_random_code(self, length: int) -> str:
+        """임시로 발급할 알파벳 n자리의 코드를 임의로 생성합니다."""
+        codes = []
+        for i in range(length):
+            codes.append(chr(random.randint(ord('A'), ord('Z'))))
+        return ''.join(codes)
+
+    def render_email(self, to: str, code: str) -> EmailMessage:
+        email = EmailMessage()
+        email.subject = "야심작 이메일 인증번호"
+        email.body = f"인증번호는 {code}입니다."
+        email.to = [to]
+        return email
 
 
 class UserCreateView(View):

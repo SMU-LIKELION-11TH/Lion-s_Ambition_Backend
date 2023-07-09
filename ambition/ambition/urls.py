@@ -21,6 +21,7 @@ from store import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('email/validation', csrf_exempt(views.EmailValidationView.as_view())),
     path('signup', csrf_exempt(views.UserCreateView.as_view())),
     path('login', csrf_exempt(views.UserLoginView.as_view())),
     path('logout', csrf_exempt(views.UserLogoutView.as_view())),
