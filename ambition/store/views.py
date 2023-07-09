@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import json
 import random
 from http import HTTPStatus
 from typing import *
@@ -160,6 +161,11 @@ class OrderView(View):
         created_month: Optional[int]
         status: Optional[int]
 
+    @dataclasses.dataclass
+    class OrderItemDTO:
+        product_id: int
+        quantity: int
+
     def get(self, request: HttpRequest) -> HttpResponse:
         """주문/조회/여러 항목 조회"""
         try:
@@ -171,12 +177,8 @@ class OrderView(View):
                     "orders": list(map(self._render_order, entities)),
                 }
             })
-        except ValueError:
+        except (ValueError, ObjectDoesNotExist):
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
-
-    def _validate_user_logged_in(self, request: HttpRequest):
-        # TODO: 기능 구현
-        pass
 
     def _parse_query_dto(self, request: HttpRequest) -> QueryDTO:
         data = request.GET
@@ -204,6 +206,52 @@ class OrderView(View):
             retval.append(entity)
         return retval
 
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """주문/생성"""
+        try:
+            self._validate_user_logged_in(request)
+            dto_list = self._parse_orderitem_dto_list(request)
+            entity = self._save_entity(dto_list)
+            return JsonResponse(status=HTTPStatus.CREATED, data={
+                "data": {
+                    "order": self._render_order(entity),
+                }
+            })
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+
+    def _parse_orderitem_dto_list(self, request: HttpRequest) -> List[OrderItemDTO]:
+        data = QueryDict(request.body)
+        retval = []
+        for item in json.loads(data['items']):
+            orderitem = OrderView.OrderItemDTO(
+                product_id=int(item['product-id']),
+                quantity=int(item['quantity']),
+            )
+            retval.append(orderitem)
+        return retval
+
+    def _save_entity(self, dto_list: List[OrderItemDTO]) -> Order:
+        entities = []
+        order = Order()
+        order.status = OrderStatus.objects.get(pk=1)
+        entities.append(order)
+        for dto in dto_list:
+            product = Product.objects.get(pk=dto.product_id)
+            orderitem = OrderItem()
+            orderitem.product = product
+            orderitem.order = order
+            orderitem.unit_price = product.regular_price
+            orderitem.quantity = dto.quantity
+            entities.append(orderitem)
+        for entity in entities:
+            entity.save()
+        return order
+
+    def _validate_user_logged_in(self, request: HttpRequest):
+        # TODO: 기능 구현
+        pass
+
     def _render_order(self, entity: Order) -> Dict:
         items = OrderItem.objects.filter(order=entity)
         return {
@@ -213,10 +261,16 @@ class OrderView(View):
                 "name": entity.status.name,
             },
             "items": list(map(self._render_order_item, items)),
-            "total_price": sum(map(lambda e: e.unit_price, items)),
+            "total_price": self._calc_total_price(items),
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
         }
+
+    def _calc_total_price(self, items: List[OrderItem]) -> int:
+        total_price = 0
+        for item in items:
+            total_price += item.unit_price * item.quantity
+        return total_price
 
     def _render_order_item(self, entity: OrderItem) -> Dict:
         return {
@@ -228,11 +282,6 @@ class OrderView(View):
             "unit-price": entity.unit_price,
             "quantity": entity.quantity,
         }
-
-
-    def post(self, request: HttpRequest) -> HttpResponse:
-        """주문/생성"""
-        pass
 
 
 class OrderIdView(View):
