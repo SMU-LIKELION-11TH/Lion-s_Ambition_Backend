@@ -5,6 +5,8 @@ from django.views.generic import View
 
 from store.models import Category
 from django.contrib.auth import logout
+from .serializers import serializeUser
+from django.contrib import auth
 
 
 
