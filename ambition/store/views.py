@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
+from django.shortcuts import render
 from django.views.generic import View
 
 from store.models import *
@@ -68,6 +69,8 @@ class EmailValidationView(View):
 class UserCreateView(View):
     "/signup"
 
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,'signup_view.html',)
     @dataclasses.dataclass
     class RequestDTO:
         email: str
@@ -81,12 +84,13 @@ class UserCreateView(View):
             dto = self.parse_request_body(request)
             self.check_email_validation_code(dto)
             user = self.create_user(dto)
-            return JsonResponse(status=HTTPStatus.CREATED, data={
-                "message": "회원가입에 성공하였습니다.",
-                "data": {
-                    "user": serializeUser(user)
-                }
-            })
+            return render(request,'templates/signup_login.html',{'user':user})
+            # return JsonResponse(status=HTTPStatus.CREATED, data={
+            #     "message": "회원가입에 성공하였습니다.",
+            #     "data": {
+            #         "user": serializeUser(user)
+            #     }
+            # })
         except ValueError:
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except (AssertionError, ObjectDoesNotExist):
@@ -121,6 +125,8 @@ class UserCreateView(View):
 class UserLoginView(View):
     "/login"
 
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,'login_view.html',)
     @dataclasses.dataclass
     class RequestDTO:
         email: str

@@ -1,0 +1,48 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Prentendard">
+    <script src="{% static 'js/signup.js' %}"></script>
+</head>
+<body>
+    <div class="signup_body">
+        <div class="signup_logo">
+            <img src="{% static 'image/logo 2.png' %}">
+        </div>
+        <div class="signup_text">
+            <button type="button" style="cursor:pointer;" onclick="location.href='login'"><img src="{% static 'image/arrow.png' %}"></button>
+            <h1>회원가입</h1>
+        </div>
+        <div class="signup_name">
+            <h2>닉네임</h2>
+            <input type="text" id="nickname" name="nickname">
+        </div>
+        <div class="signup_email">
+            <h3>이메일</h3>
+            <input type="email" id="email" name="email" placeholder="E-mail">
+            <button type="button" style="cursor:pointer;" onclick="onsubmitEmail();">이메일 인증</button>
+        </div>
+        <div class="signup_email_num">
+            <h4>이메일 인증번호</h4>
+            <input type="text" id="number" name="number">
+            <button type="button" style="cursor:pointer;" onclick="onclickckEmail();">인증 확인</button>
+        </div>
+        <div class="signup_password">
+            <h5>비밀번호</h5>
+            <input type="password" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="signup_password_ck">
+            <h6>비밀번호 확인</h6>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Password">
+        </div>
+        <div class="signup_go">
+            <button type="button" style="cursor:pointer;" onclick="onsubmitSignup();">회원가입하기</button>
+        </div>
+    </div>
+</body>
+</html>

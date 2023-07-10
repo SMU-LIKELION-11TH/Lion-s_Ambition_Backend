@@ -1,0 +1,243 @@
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    width: 1440px;
+    height: 1024px;
+}
+
+.signup_logo {
+    margin-top: 100px;
+    margin-left: 570px;
+}
+
+.signup_text {
+    margin-top: 55.23px;
+    display: flex;
+    align-items: center;
+}
+
+.signup_text > button {
+    width: 30px;
+    height: 18.75px;
+    border: none;
+    background: none;
+    outline: none;
+    margin-left: 519.25px;
+    margin-right: 127px;
+}
+
+.signup_text > h1 {
+    color: #101010;
+    text-align: center;
+    font-size: 32px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin: 0;
+}
+
+.signup_name{
+    margin-top: 46px;
+    margin-left: 570px;
+}
+
+.signup_name > h2{
+    color: #838383;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    margin-bottom: 6px;
+}
+
+.signup_name > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.signup_email{
+    margin-top: 43px;
+    margin-left: 570px;
+}
+
+.signup_email > h3{
+    color: #838383;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    margin-bottom: 6px;
+}
+
+.signup_email > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.signup_email > button{
+    width: 93.073px;
+    height: 38px;
+    border-radius: 30px;
+    background: #666;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: #FFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+    margin-left: 24px;
+}
+
+.signup_email_num{
+    margin-top: 37px;
+    margin-left: 570px;
+}
+
+.signup_email_num > h4{
+    color: #838383;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    margin-bottom: 6px;
+}
+
+.signup_email_num > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.signup_email_num > button{
+    width: 93.073px;
+    height: 38.196px;
+    border-radius: 30px;
+    background: #666;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: #FFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+    margin-left: 24px;
+}
+
+.signup_password{
+    margin-top: 35px;
+    margin-left: 570px;
+}
+
+.signup_password > h5{
+    color: #838383;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    margin-bottom: 6px;
+}
+
+.signup_password > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.signup_password_ck{
+    margin-top: 35px;
+    margin-left: 570px;
+}
+
+.signup_password_ck > h6{
+    color: #838383;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    margin-bottom: 6px;
+}
+
+.signup_password_ck > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.signup_go{
+    margin-top: 31px;
+    margin-left: 570px;
+}
+
+.signup_go > button{
+    width: 280px;
+    height: 47.173px;
+    border-radius: 30px;
+    background: #FEAC18;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: #FFF;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.signup_text > button:active{
+    position: relative;
+    top: 2px;    
+}
+
+.signup_text >button:hover{
+    opacity: 0.8;
+}
+
+.signup_email > button:active{
+    position: relative;
+    top: 2px;
+}
+
+.signup_email > button:hover{
+    opacity: 0.8;
+}
+
+.signup_email_num > button:active{
+    position: relative;
+    top: 2px;
+}
+
+.signup_email_num > button:hover{
+    opacity: 0.8;
+}
+
+.signup_go > button:active{
+    position: relative;
+    top: 2px;   
+}
+
+.signup_go > button:hover{
+    opacity: 0.8;
+}
