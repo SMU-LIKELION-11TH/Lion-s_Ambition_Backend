@@ -32,24 +32,44 @@ class UserCreateView(View):
 
 
 class UserLoginView(View):
-    def post(self, request):
-        data = json.loads(request.body)
 
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            return HttpResponse({'message': '이메일의 형식이 옳지 않습니다. 입력하신 내용을 다시 확인해주세요.'},
-                                status=400)  # Invalid email format
+<<<<<<< HEAD
+=======
+    @dataclasses.dataclass
+    class RequestDTO:
+        email: str
+        password: str
 
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """사용자/로그인"""
         try:
-            if store.objects.filter(email=data['email']).exists():
-                user = store.objects.get(email=data['email'])
+            dto = self.parse_request_body(request)
+            # TODO: 로그인 기능 구현, redirect 어디로?
+            email = dto.email
+            password = dto.password
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+            user = auth.authenticate(request, email=email, password=password)
+            if user is not None:
+                auth.login(request, user)
+                return JsonResponse(status=HTTPStatus.OK, data={
+                    "message": "로그인에 성공하였습니다.",
+                    "data":{
+                        "user": serializeUser(user)
+                    }
+                })
+        except ValueError:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
+        except (AssertionError, ObjectDoesNotExist):
+            return HttpResponse(status=HTTPStatus.UNAUTHORIZED)
 
-                if user.token == data['token']:
-                    return HttpResponse({'message': '회원가입에 성공하였습니다.'}, status=301)  # login success
-                return HttpResponse({'message': '잘못된 비밀번호입니다.'}, status=401)  # wrong password
-            return HttpResponse({'message': '존재하지 않는 계정입니다.'}, status=401)  # non email
-        except:
-            return HttpResponse({'message': "로그인 과정에서 오류가 발생했습니다."}, status=400)
-
+    def parse_request_body(self, request: HttpRequest) -> RequestDTO:
+        data = QueryDict(request.body)
+        return UserLoginView.RequestDTO(
+            email=data['email'],
+            password=data['password'],
+        )
+>>>>>>> 14babd3245ae6b038e7e9b76f8e853d9c2d472c0
 
 
 class UserLogoutView(View):
