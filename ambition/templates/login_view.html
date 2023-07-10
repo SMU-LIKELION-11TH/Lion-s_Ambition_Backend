@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Prentendard">
+    <script src="{% static 'js/login.js' %}"></script>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <script>
+        window.Kakao.init("cb9f015babbf4fae5b5122ed653fd52f");
+        function KakaoLogin() {
+            window.Kakao.Auth.login({
+                scope:'profile_nickname, profile_image, account_email, gender',
+                success: function(authObj){
+                    console.log(authObj);
+                    window.Kakao.API.request({
+                        url:'/v2/user/me',
+                        success: res => {
+                            const kakao_account = res.kakao_account;
+                            console.log(kakao_account);
+                        }
+                    });
+                    window.location.href='manage_view.html'
+                }
+            });
+        }
+    </script>
+    <div class="login_body">
+        <div class="login_logo">
+            <img src="{% static 'image/logo 2.png' %}">
+        </div>
+        <div class="login_login">
+            <h1>로그인</h1>
+        </div>
+        <div class="login_id">
+            <h2>이메일</h2>
+            <input type="email" id="username" name="username" placeholder="Email">
+        </div>
+        <div class="login_pw">
+            <h3>비밀번호</h3>
+            <input type="password" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="login_bt_wrap">
+            <button type="button" style="cursor:pointer;" onclick="onSubmitLogin();">로그인</button>
+            <input id="form_submit" type="submit" style="display:none">
+        </div>
+        <div class="login_ka">
+            <button type="button" style="cursor:pointer;" onclick="javascript:KakaoLogin();" ><img src="{% static 'image/kakao 1.png' %}"><h5>카카오톡 간편 로그인</h5></button>
+        </div>
+        <div class="sign_in">
+            <h4>아직 회원이 아닌가요?</h4>
+            <button type="button" style="cursor:pointer;" onclick="location.href='signup'">회원가입</button>
+        </div>
+    </div>
+    
+</body>
+</html>
