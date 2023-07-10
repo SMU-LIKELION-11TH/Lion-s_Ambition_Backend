@@ -1,0 +1,206 @@
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    width: 1440px;
+    height: 1024px;
+}
+.login_logo{
+    margin-top: 100px;
+    margin-left: 570px;
+}
+
+.login_logo > img{
+    display: flex;
+    width: 300px;
+    height: 216.774px;
+    justify-content: center;
+}
+
+.login_login{
+    margin-top: 55px;
+}
+
+.login_login > h1{
+    color: #101010;
+    text-align: center;
+    font-size: 32px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.login_id{
+    margin-top: 38px;
+    margin-left: 570px;
+}
+.login_id > h2{
+    display: flex;
+    width: 211px;
+    flex-direction: column;
+    margin-bottom: 6px;
+    color: #838383;
+    font-size: 15px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+}
+
+.login_id > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+
+.login_pw{
+    margin-top: 13px;
+    margin-left: 570px;
+}
+
+.login_pw > h3{
+    display: flex;
+    width: 211px;
+    flex-direction: column;
+    margin-bottom: 6px;
+    color: #838383;
+    font-size: 15px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+}
+
+.login_pw > input{
+    width: 280px;
+    height: 38px;
+    border-radius: 5px;
+    background: rgba(239, 239, 239, 0.85);
+}
+.login_bt_wrap{
+    margin-top: 20px;
+    margin-left: 570px;
+}
+.login_bt_wrap > button{
+    width: 280px;
+    height: 47.173px;
+    border-radius: 30px;
+    background: #FEAC18;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: #FFF;
+    text-align: center;
+    font-size: 18px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.sign_in{
+    margin-top: 40px;
+    margin-left: 569.93px;
+    margin-right: 590px;
+}
+
+.sign_in > h4{
+    display: flex;
+    margin-top: 0;
+    flex-direction: column;
+    color: #828282;
+    font-size: 15px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    float: left;
+}
+
+.sign_in > button{
+    color: #06F;
+    text-align: center;
+    font-size: 15px;
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    border: none;
+    background: none;
+    outline: none;
+    float: right;
+}
+
+.login_ka{
+    margin-top: 20px;
+    margin-left: 570px;
+}
+
+.login_ka > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 280px;   
+    height: 47.173px;
+    border-radius: 30px;
+    background: #FDDC3F;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    position: relative;
+}
+
+.login_ka > img {
+    position: absolute;
+    left: 27px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 39.175px;
+    height: 30px;
+}
+
+.login_ka > h5 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    color: #101010;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.login_bt_wrap > button:active{
+    position: relative;
+    top:2px;
+}
+
+.login_bt_wrap > button:hover{
+    opacity: 0.8;
+}
+
+.login_ka > button:active{
+    position: relative;
+    top: 2px;
+}
+
+.login_ka button:hover {
+    opacity: 0.8;
+}
+  
+.sign_in > button:active{
+    position: relative;
+    top: 2px;
+}
+
+.sign_in > button:hover{
+    opacity: 0.8;
+}
