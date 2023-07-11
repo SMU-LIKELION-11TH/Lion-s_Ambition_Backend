@@ -72,7 +72,23 @@ class UserLoginView(View):
         try:
             # TODO: 로그인 기능 구현
             dto = self.parse_request_body(request)
-            return JsonResponse(status=HTTPStatus.OK, data={})
+            email = dto.email
+            password = dto.password
+            for user in User.objects.all():
+                if(user.email==email):
+                    if(user.password==password):
+                        request.session['logged_in'] = True
+                        return JsonResponse(status=HTTPStatus.OK, data={
+                            "message": "로그인에 성공하였습니다.",
+                            "data": {
+                            "user": serializeUser(user)
+                        }
+                    })
+                    else:
+                        pass
+                else:
+                    pass
+            return render(request,'login_view.html',)
         except ValueError:
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except (AssertionError, ObjectDoesNotExist):
@@ -85,6 +101,8 @@ class UserLoginView(View):
             password=data['password'],
         )
 
+def is_user_logged_in(request):
+    return request.session.get('logged_in', False)
 
 class UserLogoutView(View):
     "/logout"
