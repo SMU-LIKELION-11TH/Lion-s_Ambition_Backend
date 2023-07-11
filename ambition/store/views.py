@@ -107,11 +107,12 @@ def is_user_logged_in(request):
 class UserLogoutView(View):
     "/logout"
     def get(self, request):
-        if request.user.is_authenticated:
-            logout(request)
-            return HttpResponse({'message': '로그아웃이 성공적으로 처리되었습니다.'}, status=200)
+        if request.session['logged_in'] == True:
+            request.session['logged_in'] = False
+            print("로그아웃 성공")
+            return HttpResponse(status=HTTPStatus.OK)
         else:
-            return HttpResponse({'message': '로그인되어 있지 않습니다.'}, status=401)
+            return HttpResponse(status=HTTPStatus.UNAUTHORIZED)
 
 class OrderView(View):
     "/order"
