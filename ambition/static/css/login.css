@@ -37,6 +37,7 @@ body{
 .login_id{
     margin-top: 38px;
     margin-left: 570px;
+    border-style: none;
 }
 .login_id > h2{
     display: flex;
@@ -62,6 +63,7 @@ body{
 .login_pw{
     margin-top: 13px;
     margin-left: 570px;
+    border-style: none;
 }
 
 .login_pw > h3{
@@ -101,6 +103,7 @@ body{
     font-style: normal;
     font-weight: 600;
     line-height: 18px;
+    border-style: none;
 }
 
 .sign_in{
@@ -151,6 +154,7 @@ body{
     background: #FDDC3F;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     position: relative;
+    border-style: none;
 }
 
 .login_ka > img {
