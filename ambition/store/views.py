@@ -1,14 +1,9 @@
-import dataclasses
-import datetime
-import json
-import random
 from http import HTTPStatus
 from typing import *
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.core.mail import EmailMessage
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
 from store.dto import *
@@ -60,26 +55,13 @@ class UserCreateView(View):
 class UserLoginView(View):
     "/login"
 
-    @dataclasses.dataclass
-    class RequestDTO:
-        email: str
-        password: str
-
     def post(self, request: HttpRequest) -> HttpResponse:
         """사용자/로그인"""
         try:
             # TODO: 로그인 기능 구현
-            dto = self.parse_request_body(request)
             return JsonResponse(status=HTTPStatus.OK, data={})
         except ValueError:
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
-
-    def parse_request_body(self, request: HttpRequest) -> RequestDTO:
-        data = QueryDict(request.body)
-        return UserLoginView.RequestDTO(
-            email=data['email'],
-            password=data['password'],
-        )
 
 
 class UserLogoutView(View):
@@ -124,10 +106,6 @@ class OrderView(View):
 
 class OrderIdView(View):
     "/order/{id}"
-
-    @dataclasses.dataclass
-    class OrderUpdateDTO:
-        status: int
 
     def get(self, request: HttpRequest, order_id: int) -> HttpResponse:
         """주문/조회/단일 항목 조회"""
