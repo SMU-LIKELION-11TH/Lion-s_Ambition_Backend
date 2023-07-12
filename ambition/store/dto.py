@@ -65,6 +65,34 @@ class UserRegistrationDTO:
 
 
 @dataclasses.dataclass
+class UserLoginDTO:
+    @classmethod
+    def from_request(cls, request: HttpRequest) -> UserLoginDTO:
+        """Request Body로부터 DTO 인스턴스를 생성합니다.
+
+        :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
+        :raises KeyError: 누락된 속성이 있을 경우에 발생.
+        """
+        return cls.from_querydict(QueryDict(request.body))
+
+    @classmethod
+    def from_querydict(cls, querydict: QueryDict) -> UserLoginDTO:
+        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+
+        :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
+        :raises KeyError: 누락된 속성이 있을 경우에 발생.
+        """
+        validate_email(querydict['email'])
+        return UserLoginDTO(
+            email=querydict['email'],
+            password=querydict['password'],
+        )
+
+    email: str
+    password: str
+
+
+@dataclasses.dataclass
 class ProductCreationDTO:
     @classmethod
     def from_request(cls, request: HttpRequest) -> ProductCreationDTO:

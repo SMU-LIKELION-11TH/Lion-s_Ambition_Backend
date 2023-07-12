@@ -8,6 +8,7 @@ from django.core.mail import EmailMessage
 from django.db import models
 
 from store.dto import *
+from store.exceptions import *
 
 # Create your models here.
 
@@ -57,6 +58,8 @@ class EmailValidation(models.Model):
 
 
 class User(models.Model):
+    SESSION_CURRENT_USER_KEY = 'current-user'
+
     @classmethod
     def create_from_dto(cls, dto: UserRegistrationDTO) -> User:
         entity = User()
@@ -66,6 +69,29 @@ class User(models.Model):
         entity.kakao_oauth_token = None
         entity.save()
         return entity
+
+    @classmethod
+    def authenticate(cls, request: HttpRequest, dto: UserLoginDTO) -> User:
+        try:
+            entity = cls.objects.get(email=dto.email)
+            if entity.password != dto.password:
+                raise ValidationError('Wrong password')
+        except ObjectDoesNotExist:
+            raise ValidationError('Email not found')
+        request.session[cls.SESSION_CURRENT_USER_KEY] = entity.pk
+        return entity
+
+    @classmethod
+    def unauthenticate(cls, request: HttpRequest):
+        del request.session[cls.SESSION_CURRENT_USER_KEY]
+
+    @classmethod
+    def current_user(cls, request: HttpRequest) -> User:
+        try:
+            pk = int(request.session.get(cls.SESSION_CURRENT_USER_KEY))
+            return cls.objects.get(pk=pk)
+        except Exception:
+            raise UserNotLoggedInException()
 
     name = models.CharField(max_length=16)
     email = models.EmailField(max_length=64, unique=True)
