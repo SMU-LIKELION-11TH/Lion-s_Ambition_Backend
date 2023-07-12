@@ -33,7 +33,6 @@ def serializeOrder(entity: Order) -> dict:
 
 def serializeOrderItem(entity: OrderItem) -> dict:
     return {
-        "id": entity.pk,
         "product": {
             "id": entity.product.pk,
             "name": entity.product.name,

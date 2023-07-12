@@ -10,3 +10,6 @@ venv/
 db.sqlite3
 *.pyc
 .idea/
+
+# Secured files
+secrets.json

@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import json
 from pathlib import Path
 
+import pymysql
+
+
+# Use MySQL as database
+pymysql.install_as_MySQLdb()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -82,8 +89,13 @@ WSGI_APPLICATION = 'ambition.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': secrets['DATABASE'].get('ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': secrets['DATABASE'].get('NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': secrets['DATABASE']['USER'],
+        'PASSWORD': secrets['DATABASE']['PASSWORD'],
+        'HOST': secrets['DATABASE']['HOST'],
+        'PORT': secrets['DATABASE']['PORT'],
+        'OPTIONS': secrets['DATABASE']['OPTIONS'],
     }
 }
 
