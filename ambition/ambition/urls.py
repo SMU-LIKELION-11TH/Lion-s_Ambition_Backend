@@ -37,7 +37,7 @@ urlpatterns = [
     path('manage/order', TemplateView.as_view(template_name='ordermenu.html')),
     path('manage/menu', TemplateView.as_view(template_name='menu.html')),
     path('manage/sales', TemplateView.as_view(template_name='manage.html')),
-    path('m/home', TemplateView.as_view(template_name='moblie-view/main.html')),
+    path('m/home', TemplateView.as_view(template_name='mobile-view/main.html')),
     path('m/menu', TemplateView.as_view(template_name="mobile-view/menu.html")),
     path('m/receipt', TemplateView.as_view(template_name="mobile-view/receipt.html")),
 ]
