@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 
 from store.views import *
 
@@ -31,4 +32,6 @@ urlpatterns = [
     path('api/v1/product/<int:product_id>', csrf_exempt(ProductIdView.as_view())),
     path('api/v1/category', csrf_exempt(CategoryView.as_view())),
     path('mobile-view/menu', ProductView.as_view()),
+    path('login', TemplateView.as_view(template_name='login_view.html')),
+    path('signup', TemplateView.as_view(template_name='signup_view.html')),
 ]
