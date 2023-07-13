@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponse
-from django.views.generic import  TemplateView
-from django.shortcuts import render
+from django.views.generic import View, TemplateView
+from django.shortcuts import render, redirect
 
 from store.models import *
 
@@ -34,3 +34,8 @@ class OrderView(TemplateView):
             'user': serializeUser(User.current_user(request))
             }
         )
+    
+class LogoutPageView(View):
+    def get(self, request:HttpRequest) -> HttpResponse :
+        User.unauthenticate(request)
+        return redirect('/login')
