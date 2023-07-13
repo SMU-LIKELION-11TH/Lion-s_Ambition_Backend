@@ -29,13 +29,11 @@ class EmailValidation(models.Model):
             if entity.codes != dto.validation:
                 raise AssertionError()
             entity.delete()
-            return True
         except AssertionError:
-            pass
-        except ObjectDoesNotExist:
-            pass
-        finally:
             return False
+        except ObjectDoesNotExist:
+            return False
+        return True
 
     @classmethod
     def generate_codes(cls, length=5) -> str:
