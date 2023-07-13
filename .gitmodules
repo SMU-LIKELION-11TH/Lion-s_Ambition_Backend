@@ -1,6 +1,8 @@
 [submodule "ambition/store/templates"]
 	path = ambition/store/templates
 	url = https://github.com/SMU-LIKELION-11TH/Lion-s_Ambition_Frontend.git
+	branch = templates
 [submodule "ambition/store/static"]
 	path = ambition/store/static
 	url = https://github.com/SMU-LIKELION-11TH/Lion-s_Ambition_Frontend.git
+	branch = static
