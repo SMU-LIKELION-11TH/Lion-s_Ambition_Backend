@@ -236,12 +236,11 @@ class OrderCreationDTO:
             items=[],
         )
         try:
-            items = REQUEST_BODY_PARSER(data['items'])
-            if not isinstance(items, list):
+            if not isinstance(data['items'], list):
                 raise ValueError()
         except json.JSONDecodeError:
             raise ValueError()
-        for item in items:
+        for item in data['items']:
             item_dto = OrderItemDTO(
                 product_id=int(item['product-id']),
                 quantity=int(item['quantity']),
