@@ -25,5 +25,6 @@ git submodule update --remote --init
 서버 구동하기
 
 ```shell
-python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+cd ambition/
+python manage.py runserver
 ```
