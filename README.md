@@ -19,5 +19,11 @@ pip install -r ambition/requirements.txt
 Front End 팀의 작업물 불러오기. ([GitHub 링크](https://github.com/SMU-LIKELION-11TH/Lion-s_Ambition_Frontend))
 
 ```shell
-git submodule update --remote ambition/store/templates
+git submodule update --remote --init
+```
+
+서버 구동하기
+
+```shell
+python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
 ```
