@@ -31,4 +31,5 @@ urlpatterns = [
     path('api/v1/product', csrf_exempt(ProductView.as_view())),
     path('api/v1/product/<int:product_id>', csrf_exempt(ProductIdView.as_view())),
     path('api/v1/category', csrf_exempt(CategoryView.as_view())),
+    path('login', TemplateView.as_view(template_name='login_view.html')),
 ]
