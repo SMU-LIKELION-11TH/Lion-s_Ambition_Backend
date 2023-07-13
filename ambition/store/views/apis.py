@@ -112,7 +112,6 @@ class OrderView(View):
     def post(self, request: HttpRequest) -> HttpResponse:
         """주문/생성"""
         try:
-            check_user_logged_in(request)
             dto = OrderCreationDTO.from_request(request)
             entity = Order.create_from_dto(dto)
             return JsonResponse(status=HTTPStatus.CREATED, data={
@@ -122,8 +121,6 @@ class OrderView(View):
             })
         except (KeyError, ValueError):
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
-        except UserNotLoggedInException:
-            return HttpResponse(status=HTTPStatus.UNAUTHORIZED)
 
 
 class OrderIdView(View):
