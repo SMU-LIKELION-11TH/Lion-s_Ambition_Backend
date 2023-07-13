@@ -17,17 +17,17 @@ class EmailValidationRequestDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> EmailValidationRequestDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> EmailValidationRequestDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 키 "email"이 포함되지 않은 경우에 발생.
         """
-        validate_email(querydict['email'])
-        return EmailValidationRequestDTO(email=querydict['email'])
+        validate_email(data['email'])
+        return EmailValidationRequestDTO(email=data['email'])
 
     email: str
 
@@ -41,21 +41,21 @@ class UserRegistrationDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> UserRegistrationDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> UserRegistrationDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        validate_email(querydict['email'])
+        validate_email(data['email'])
         return UserRegistrationDTO(
-            email=querydict['email'],
-            password=querydict['password'],
-            name=querydict['name'],
-            validation=querydict['validation-code'],
+            email=data['email'],
+            password=data['password'],
+            name=data['name'],
+            validation=data['validation-code'],
         )
 
     email: str
@@ -73,19 +73,19 @@ class UserLoginDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> UserLoginDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def dict(cls, data: Dict) -> UserLoginDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        validate_email(querydict['email'])
+        validate_email(data['email'])
         return UserLoginDTO(
-            email=querydict['email'],
-            password=querydict['password'],
+            email=data['email'],
+            password=data['password'],
         )
 
     email: str
@@ -101,21 +101,21 @@ class ProductCreationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> ProductCreationDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> ProductCreationDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: items 속성의 형식이 올바르지 않은 경우에 발생.
         """
         dto = ProductCreationDTO(
-            category_id=int(querydict['category-id']),
-            name=querydict['name'],
-            price=int(querydict['price']),
-            image_url=querydict['image-url'],
-            soldout=querydict['soldout'],
+            category_id=int(data['category-id']),
+            name=data['name'],
+            price=int(data['price']),
+            image_url=data['image-url'],
+            soldout=data['soldout'],
         )
         if isinstance(dto.soldout, str):
             dto.soldout = dto.soldout == 'true'
@@ -139,18 +139,18 @@ class ProductQueryDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(request.GET)
+        return cls.from_dict(request.GET)
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> ProductQueryDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> ProductQueryDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: items 속성의 형식이 올바르지 않은 경우에 발생.
         """
         dto = ProductQueryDTO(
-            category_id=querydict.get('category-id', None),
-            soldout=querydict.get('soldout', None),
+            category_id=data.get('category-id', None),
+            soldout=data.get('soldout', None),
         )
         if isinstance(dto.soldout, str):
             dto.soldout = dto.soldout == 'true'
@@ -175,21 +175,21 @@ class ProductModificationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> ProductModificationDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> ProductModificationDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: items 속성의 형식이 올바르지 않은 경우에 발생.
         """
         dto = ProductModificationDTO(
-            category_id=querydict.get('category-id'),
-            name=querydict.get('name'),
-            price=querydict.get('price'),
-            image_url=querydict.get('image-url'),
-            soldout=querydict.get('soldout'),
+            category_id=data.get('category-id'),
+            name=data.get('name'),
+            price=data.get('price'),
+            image_url=data.get('image-url'),
+            soldout=data.get('soldout'),
         )
         if dto.category_id is not None:
             dto.category_id = int(dto.category_id)
@@ -220,11 +220,11 @@ class OrderCreationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> OrderCreationDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> OrderCreationDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: items 속성의 형식이 올바르지 않은 경우에 발생.
@@ -233,7 +233,7 @@ class OrderCreationDTO:
             items=[],
         )
         try:
-            items = json.loads(querydict['items'])
+            items = json.loads(data['items'])
             if not isinstance(items, list):
                 raise ValueError()
         except json.JSONDecodeError:
@@ -258,19 +258,19 @@ class OrderQueryDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(request.GET)
+        return cls.from_dict(request.GET)
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> OrderQueryDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, dict: Dict) -> OrderQueryDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: 속성의 형식이 올바르지 않은 경우에 발생.
         """
         dto = OrderQueryDTO(
-            create_year=querydict.get('year'),
-            create_month=querydict.get('month'),
-            status=querydict.get('status'),
+            create_year=dict.get('year'),
+            create_month=dict.get('month'),
+            status=dict.get('status'),
         )
         if dto.create_year is not None:
             dto.create_year = int(dto.create_year)
@@ -294,17 +294,17 @@ class OrderModificationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_querydict(QueryDict(request.body))
+        return cls.from_dict(QueryDict(request.body))
 
     @classmethod
-    def from_querydict(cls, querydict: QueryDict) -> OrderModificationDTO:
-        """QueryDict로부터 DTO 인스턴스를 생성합니다.
+    def from_dict(cls, data: Dict) -> OrderModificationDTO:
+        """Dict로부터 DTO 인스턴스를 생성합니다.
 
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         :raises ValueError: 속성의 형식이 올바르지 않은 경우에 발생.
         """
         dto = OrderModificationDTO(
-            status=int(querydict['status']),
+            status=int(data['status']),
         )
         return dto
 
