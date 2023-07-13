@@ -46,10 +46,16 @@ class UserCreateView(View):
             if not is_valid:
                 raise ValidationError('이메일 인증 코드가 올바르지 않습니다.')
             user = User.create_from_dto(dto)
-            return JsonResponse(status=HTTPStatus.CREATED, data={
-                "message": "회원가입에 성공하였습니다.",
-                "data": { "user": serializeUser(user) },
-            })
+            return JsonResponse(
+                status=HTTPStatus.CREATED,
+                data={
+                    "message": "회원가입에 성공하였습니다.",
+                    "data": { "user": serializeUser(user) },
+                },
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except ValueError:
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except (AssertionError, ObjectDoesNotExist, ValidationError):
@@ -66,11 +72,17 @@ class UserLoginView(View):
         try:
             dto = UserLoginDTO.from_request(request)
             entity = User.authenticate(request, dto)
-            return JsonResponse(status=HTTPStatus.MOVED_PERMANENTLY, data={
-                "data": {
-                    "user": serializeUser(entity),
+            return JsonResponse(
+                status=HTTPStatus.MOVED_PERMANENTLY,
+                data={
+                    "data": {
+                        "user": serializeUser(entity),
+                    },
                 },
-            })
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except ValueError:
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except ValidationError:
@@ -99,11 +111,17 @@ class OrderView(View):
             check_user_logged_in(request)
             dto = OrderQueryDTO.from_request(request)
             entities = Order.query_from_dto(dto)
-            return JsonResponse(status=HTTPStatus.OK, data={
-                "data": {
-                    "orders": list(map(serializeOrder, entities)),
-                }
-            })
+            return JsonResponse(
+                status=HTTPStatus.OK,
+                data={
+                    "data": {
+                        "orders": list(map(serializeOrder, entities)),
+                    }
+                },
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except (ValueError, ObjectDoesNotExist):
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except UserNotLoggedInException:
@@ -114,11 +132,17 @@ class OrderView(View):
         try:
             dto = OrderCreationDTO.from_request(request)
             entity = Order.create_from_dto(dto)
-            return JsonResponse(status=HTTPStatus.CREATED, data={
-                "data": {
-                    "order": serializeOrder(entity),
-                }
-            })
+            return JsonResponse(
+                status=HTTPStatus.CREATED,
+                data={
+                    "data": {
+                        "order": serializeOrder(entity),
+                    }
+                },
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except (KeyError, ValueError):
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
 
@@ -130,11 +154,17 @@ class OrderIdView(View):
         """주문/조회/단일 항목 조회"""
         try:
             entity = Order.objects.get(pk=order_id)
-            return JsonResponse(status=HTTPStatus.OK, data={
-                "data": {
-                    "order": serializeOrder(entity)
-                }
-            })
+            return JsonResponse(
+                status=HTTPStatus.OK,
+                data={
+                    "data": {
+                        "order": serializeOrder(entity)
+                    }
+                },
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except ObjectDoesNotExist:
             return HttpResponse(status=HTTPStatus.NOT_FOUND)
 
@@ -144,11 +174,17 @@ class OrderIdView(View):
             check_user_logged_in(request)
             dto = OrderModificationDTO.from_request(request)
             entity = Order.update_from_dto(order_id, dto)
-            return JsonResponse(status=HTTPStatus.OK, data={
-                "data": {
-                    "order": serializeOrder(entity)
-                }
-            })
+            return JsonResponse(
+                status=HTTPStatus.OK,
+                data={
+                    "data": {
+                        "order": serializeOrder(entity)
+                    }
+                },
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except (KeyError, ValueError):
             return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         except ObjectDoesNotExist:
@@ -166,11 +202,17 @@ class ProductView(View):
         try:
             dto = ProductQueryDTO.from_request(request)
             entities = Product.query_from_dto(dto)
-            return JsonResponse(status=HTTPStatus.OK, data={
-                "data": {
-                    "products": list(map(serializeProduct, entities)),
+            return JsonResponse(
+                status=HTTPStatus.OK,
+                data={
+                    "data": {
+                        "products": list(map(serializeProduct, entities)),
+                    },
                 },
-            })
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
         except (KeyError, ValueError):
@@ -182,11 +224,14 @@ class ProductView(View):
             check_user_logged_in(request)
             dto = ProductCreationDTO.from_request(request)
             entity = Product.create_from_dto(dto)
-            return JsonResponse(status=HTTPStatus.CREATED, data={
-                "data": {
-                    "product": serializeProduct(entity),
-                },
-            })
+            return JsonResponse(
+                status=HTTPStatus.CREATED,
+                data={
+                    "data": {
+                        "product": serializeProduct(entity),
+                    },
+                }
+            )
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.BAD_REQUEST, data={"message": "Category not found"})
         except (KeyError, ValueError):
@@ -206,11 +251,17 @@ class ProductIdView(View):
             check_user_logged_in(request)
             dto = ProductModificationDTO.from_request(request)
             entity = Product.update_from_dto(product_id, dto)
-            return JsonResponse(status=HTTPStatus.OK, data={
-                "data": {
-                    "product": serializeProduct(entity),
+            return JsonResponse(
+                status=HTTPStatus.OK,
+                  data={
+                    "data": {
+                        "product": serializeProduct(entity),
+                    },
                 },
-            })
+                headers={
+                    'Access-Control-Allow-Origin': '*',
+                },
+            )
         except ObjectDoesNotExist:
             return JsonResponse(status=HTTPStatus.NOT_FOUND, data={})
         except (KeyError, ValueError):
@@ -227,8 +278,14 @@ class CategoryView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         """카테고리/조회"""
         categories = Category.objects.all()
-        return JsonResponse(status=HTTPStatus.OK, data={
-            "data": {
-                "categories": list(map(serializeCategory, categories)),
+        return JsonResponse(
+            status=HTTPStatus.OK,
+            data={
+                "data": {
+                    "categories": list(map(serializeCategory, categories)),
+                },
             },
-        })
+            headers={
+                'Access-Control-Allow-Origin': '*',
+            },
+        )
