@@ -64,8 +64,8 @@ class UserLoginView(View):
     def post(self, request: HttpRequest) -> HttpResponse:
         """사용자/로그인"""
         try:
-            dto = OrderQueryDTO.from_request(request)
-            entity = User.authenticate(dto)
+            dto = UserLoginDTO.from_request(request)
+            entity = User.authenticate(request, dto)
             return JsonResponse(status=HTTPStatus.MOVED_PERMANENTLY, data={
                 "data": {
                     "user": serializeUser(entity),
