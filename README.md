@@ -22,6 +22,18 @@ Front End 팀의 작업물 불러오기. ([GitHub 링크](https://github.com/SMU
 git submodule update --remote --init
 ```
 
+secrets.json 파일 생성하기
+
+```shell
+# Linux, MacOS
+cp ambition/secrets.template.json ambition/secrets.json
+
+# Windows
+Copy ambition/secrets.template.json ambition/secrets.json
+```
+
+> secrets.json 파일에 적절한 세팅 값들을 사용한다.
+
 서버 구동하기
 
 ```shell
