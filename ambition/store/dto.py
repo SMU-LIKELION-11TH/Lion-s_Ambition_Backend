@@ -8,6 +8,9 @@ from django.core.validators import validate_email
 from django.http import HttpRequest
 
 
+REQUEST_BODY_PARSER = json.loads
+
+
 @dataclasses.dataclass
 class EmailValidationRequestDTO:
     @classmethod
@@ -17,7 +20,7 @@ class EmailValidationRequestDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> EmailValidationRequestDTO:
@@ -41,7 +44,7 @@ class UserRegistrationDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> UserRegistrationDTO:
@@ -73,7 +76,7 @@ class UserLoginDTO:
         :raises django.core.exceptions.ValidationError: 이메일 형식이 아닐 경우에 발생.
         :raises KeyError: 누락된 속성이 있을 경우에 발생.
         """
-        return cls.dict(json.loads(request.body))
+        return cls.dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def dict(cls, data: Dict) -> UserLoginDTO:
@@ -101,7 +104,7 @@ class ProductCreationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> ProductCreationDTO:
@@ -175,7 +178,7 @@ class ProductModificationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> ProductModificationDTO:
@@ -220,7 +223,7 @@ class OrderCreationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> OrderCreationDTO:
@@ -233,7 +236,7 @@ class OrderCreationDTO:
             items=[],
         )
         try:
-            items = json.loads(data['items'])
+            items = REQUEST_BODY_PARSER(data['items'])
             if not isinstance(items, list):
                 raise ValueError()
         except json.JSONDecodeError:
@@ -294,7 +297,7 @@ class OrderModificationDTO:
         :raises KeyError: 누락된 데이터가 있을 경우에 발생.
         :raises ValueError: 입력 데이터의 형식이 올바르지 않은 경우에 발생.
         """
-        return cls.from_dict(json.loads(request.body))
+        return cls.from_dict(REQUEST_BODY_PARSER(request.body))
 
     @classmethod
     def from_dict(cls, data: Dict) -> OrderModificationDTO:
